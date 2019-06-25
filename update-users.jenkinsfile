@@ -12,7 +12,7 @@ pipeline {
                 git (
                     branch: 'master',
                     credentialsId: 'Richard',
-                    url: 'ssh://git@192.30.253.112:TodayTix/config.git'
+                    url: 'git@github.com:TodayTix/config.git'
                 )
                 sh 'cd config/ansible'
             }
