@@ -21,7 +21,7 @@ pipeline {
                 sh 'pwd'
                 sh 'cd ansible'
                 ansiblePlaybook (
-                    ansibleName: 'stable-2.2'
+                    ansibleName: 'stable-2.2',
                     playbook: 'update_users.yml',
                     inventory: '${Hosts}', 
                     credentialsId: 'Richard'
