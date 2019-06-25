@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Retrieve Code'){
             steps {
-                git branch: 'my_specific_branch',
+                git branch: 'master',
                 credentialsId: 'Richard',
                 url: 'ssh://git@github.com:TodayTix/config.git'
                 sh 'cd config/ansible'
