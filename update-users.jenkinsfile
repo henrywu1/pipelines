@@ -19,12 +19,8 @@ pipeline {
         stage('Deploy Update User Script'){
             steps {
                 dir('ansible'){
-                    sshagent (credentials: ['Richard']) {
-                        ansiblePlaybook (
-                            playbook: 'update_users.yml',
-                            inventory: '${Hosts}', 
-                        )
-                    }
+                    sh 'cp /var/ssh_files/id_rsa .'
+                    sh 'ansible-playbook update_users.yml -i hosts/dev --private-key "id_rsa" -u richard'
                 }
             }
         }
