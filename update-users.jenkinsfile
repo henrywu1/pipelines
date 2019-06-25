@@ -20,8 +20,8 @@ pipeline {
             steps {
                 sh 'cd ansible'
                 ansiblePlaybook (
-                    playbook: 'update_users.yml',
-                    inventory: '${Hosts}', 
+                    playbook: 'ansible/update_users.yml',
+                    inventory: 'ansible/${Hosts}', 
                     credentialsId: 'Richard'
                 )
             }
