@@ -19,11 +19,12 @@ pipeline {
         stage('Deploy Update User Script'){
             steps {
                 dir('ansible'){
-                    ansiblePlaybook (
-                        playbook: 'update_users.yml',
-                        inventory: '${Hosts}', 
-                        credentialsId: 'Richard'
-                    )
+                    sshagent (credentials: ['Richard']) {
+                        ansiblePlaybook (
+                            playbook: 'update_users.yml',
+                            inventory: '${Hosts}', 
+                        )
+                    }
                 }
             }
         }
