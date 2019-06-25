@@ -14,7 +14,9 @@ pipeline {
                     credentialsId: 'Richard',
                     url: 'git@github.com:TodayTix/config.git'
                 )
-                sh 'cd config/ansible'
+                sh 'ls'
+                sh 'pwd'
+                sh 'cd ansible'
             }
         }
         stage('Deploy Update User Script'){
