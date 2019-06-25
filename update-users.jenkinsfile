@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'Hosts', choices: 'dev\nqa\nstaging\prod\ndata\ndata-dev\nsys')
+    }
+    options {
+        timeout(time:10)
+    }
+    stages {
+        stage('Retrieve Code'){
+            steps {
+                sh 'git clone https://github.com/TodayTix/config.git'
+                sh 'cd config/ansible'
+            }
+        }
+        stage('Deploy Update User Script'){
+            steps {
+                script {
+                    sh 'ansible-playbook update_users.yml -i ${Hosts}'
+                }
+            }
+        }
+        stage('Cleanup'){
+            steps {
+                deleteDir()
+            }
+        }
+    }
+}
