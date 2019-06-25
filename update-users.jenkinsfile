@@ -19,10 +19,11 @@ pipeline {
         }
         stage('Deploy Update User Script'){
             steps {
-                ansiblePlaybook('path/playbook.yml') {
-                    inventoryPath('hosts/${Hosts}')
-                    credentialsId('Richard')
-                }
+                ansiblePlaybook ( 
+                    playbook: 'update_users.yml',
+                    inventory: 'hosts/${Hosts}', 
+                    credentialsId: 'Richard'
+                )
             }
         }
         stage('Cleanup'){
