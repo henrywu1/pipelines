@@ -18,9 +18,10 @@ pipeline {
         }
         stage('Deploy Update User Script'){
             steps {
+                sh 'cd ansible'
                 ansiblePlaybook (
-                    playbook: 'ansible/update_users.yml',
-                    inventory: 'ansible/${Hosts}', 
+                    playbook: 'update_users.yml',
+                    inventory: '${Hosts}', 
                     credentialsId: 'Richard'
                 )
             }
