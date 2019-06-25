@@ -21,7 +21,7 @@ pipeline {
             steps {
                 ansiblePlaybook ( 
                     playbook: 'update_users.yml',
-                    inventory: 'hosts/${Hosts}', 
+                    inventory: '${Hosts}', 
                     credentialsId: 'Richard'
                 )
             }
