@@ -22,7 +22,7 @@ pipeline {
                     ansiblePlaybook (
                         playbook: 'update_users.yml',
                         inventory: '${Hosts}', 
-                        credentialsId: 'Richar'
+                        credentialsId: 'Richard'
                     )
                 }
             }
