@@ -10,7 +10,7 @@ pipeline {
         stage('Retrieve Code'){
             steps {
                 git (
-                    branch: 'origin/master',
+                    branch: 'master',
                     credentialsId: 'Richard',
                     url: 'ssh://git@github.com:TodayTix/config.git'
                 )
