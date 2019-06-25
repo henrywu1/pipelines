@@ -14,15 +14,14 @@ pipeline {
                     credentialsId: 'Richard',
                     url: 'git@github.com:TodayTix/config.git'
                 )
-                sh 'ls'
-                sh 'pwd'
                 sh 'cd ansible'
             }
         }
         stage('Deploy Update User Script'){
             steps {
-                script {
-                    sh 'ansible-playbook update_users.yml -i hosts/${Hosts}'
+                ansiblePlaybook('path/playbook.yml') {
+                    inventoryPath('hosts/${Hosts}')
+                    credentialsId('Richard')
                 }
             }
         }
