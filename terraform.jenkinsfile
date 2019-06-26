@@ -42,6 +42,8 @@ pipeline {
                 }
                 load "$JENKINS_HOME/.envars/${cld}"
                 dir("terraform/${Workspace}"){
+                    sh 'echo ${AWS_ACCESS_KEY_ID}'
+                    sh 'echo ${TF_VAR_s_id}'
                     sh 'terraform init'
                     sh 'echo $(date "+%D_%T") >> timestamp.txt'
                     sh 'terraform plan -out="$(cat timestamp.txt).outfile"'
