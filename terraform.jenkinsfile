@@ -23,11 +23,10 @@ pipeline {
                         env.repo='git@github.com:TodayTix/config.git'
                     }
                 }
-                sh 'echo ${repo}'
                 git (
                     branch: 'master',
                     credentialsId: 'Richard',
-                    url: '${repo}'
+                    url: ${repo}
                 )
             }
         }
