@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'Environment', choices: 'shared\ndev\nqa\nstaging\ndemo')
+        booleanParam(name: 'Sandbox', defaultValue: true, description: 'Run in sandbox cloud account')
+    }
+    options {
+        timeout(time:10)
+    }
+    environment {
+        script {
+            if(Sandbox=="true"){
+                cld='dev'
+            }
+            else{
+                cld='prod'
+            }
+        }
+    }
+    stages {
+        stage('Cleanup'){
+            steps {
+                deleteDir()
+            }
+        }
+        stage('Retrieve Code'){
+            steps {
+                git (
+                    branch: 'master',
+                    credentialsId: 'Richard',
+                    url: 'git@github.com:TodayTix/config.git'
+                )
+            }
+        }
+        stage('Run plan'){
+            steps {
+                load "$JENKINS_HOME/.envars/${cld}"
+                dir('terraform/${Environment}'){
+                    sh 'terraform init'
+                    sh 'echo $(date "+%D_%T") >> timestamp.txt'
+                    sh 'terraform plan -out="$(cat timestamp.txt).outfile"'
+                }
+            }
+        }
+        stage('Approve Run'){
+            input "Plan Approved"
+            steps {
+                load "$JENKINS_HOME/.envars/${cld}"
+                dir('terraform/${Environment}'){
+                    sh 'terraform apply -auto-approve $(cat timestamp.txt).outfile)'
+                }
+            }
+        }
+    }
+}
