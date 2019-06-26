@@ -49,7 +49,6 @@ pipeline {
             }
         }
         stage('Approve Run'){
-            input "Plan Approved"
             steps {
                 input {
                     message: 'Ready to run Plan?'
