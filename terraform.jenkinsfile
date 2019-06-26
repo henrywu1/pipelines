@@ -34,10 +34,10 @@ pipeline {
             steps {
                 script {
                     if(Sandbox=="true"){
-                        cld='dev'
+                        env.cld='dev'
                    }
                     else{
-                        cld='prod'
+                        env.cld='prod'
                     }
                 }
                 load "$JENKINS_HOME/.envars/${cld}"
@@ -59,10 +59,10 @@ pipeline {
             steps {
                 script {
                     if(Sandbox=="true"){
-                        cld='dev'
+                        env.cld='dev'
                     }
                     else{
-                        cld='prod'
+                        env.cld='prod'
                     }
                 }
                 load "$JENKINS_HOME/.envars/${cld}"
