@@ -67,7 +67,7 @@ pipeline {
                 }
                 load "$JENKINS_HOME/.envars/${cld}"
                 dir("terraform/${Workspace}"){
-                    sh 'cat ../$(cat timestamp.txt).outfile'
+                    sh 'cat ../$(cat ../timestamp.txt).outfile'
                     sh 'terraform apply -auto-approve ../$(cat ../timestamp.txt).outfile'
                 }
             }
