@@ -8,12 +8,6 @@ pipeline {
         timeout(time:10)
     }
     stages {
-        stage('Cleanup'){
-            steps {
-                sh 'rm timestamp*'
-                sh 'rm *.outfile'
-            }
-        }
         stage('Retrieve Code'){
             steps {
                 script {
@@ -72,6 +66,12 @@ pipeline {
                 dir("terraform/${Workspace}"){
                     sh 'cat $(cat timestamp.txt).outfile'
                     sh 'terraform apply -auto-approve $(cat timestamp.txt).outfile'
+                }
+            }
+            stage('Cleanup'){
+                steps {
+                    sh 'rm timestamp*'
+                    sh 'rm *.outfile'
                 }
             }
         }
