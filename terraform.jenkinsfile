@@ -17,13 +17,13 @@ pipeline {
             steps {
                 script {
                     if(Sandbox=="true"){
-                        repo='git@github.com:rlomax21/Infra-Dev.git'
+                        env.repo='git@github.com:rlomax21/Infra-Dev.git'
                     }
                     else{
-                        repo='git@github.com:TodayTix/config.git'
+                        env.repo='git@github.com:TodayTix/config.git'
                     }
                 }
-                sh 'echo ${env.repo}'
+                sh 'echo ${repo}'
                 git (
                     branch: 'master',
                     credentialsId: 'Richard',
