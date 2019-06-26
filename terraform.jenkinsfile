@@ -8,6 +8,11 @@ pipeline {
         timeout(time:10)
     }
     stages {
+        stage('Start'){
+            steps {
+                deleteDir()
+            }
+        }
         stage('Retrieve Code'){
             steps {
                 script {
