@@ -68,11 +68,11 @@ pipeline {
                     sh 'terraform apply -auto-approve $(cat timestamp.txt).outfile'
                 }
             }
-            stage('Cleanup'){
-                steps {
-                    sh 'rm timestamp*'
-                    sh 'rm *.outfile'
-                }
+        }
+        stage('Cleanup'){
+            steps {
+                sh 'rm timestamp*'
+                sh 'rm *.outfile'
             }
         }
     }
