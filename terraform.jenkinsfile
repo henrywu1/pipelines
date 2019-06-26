@@ -49,14 +49,14 @@ pipeline {
             }
         }
         stage('Approve Run'){
-            steps {
-                input {
-                    message: 'Ready to run Plan?'
-                    ok: 'true'
-                    parameters {
-                        booleanParam(name: 'apply')
-                    }
+            input {
+                message: 'Ready to run Plan?'
+                ok: 'true'
+                parameters {
+                    booleanParam(name: 'apply')
                 }
+            }
+            steps {
                 script {
                     if(Sandbox=="true"){
                         cld='dev'
