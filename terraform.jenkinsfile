@@ -50,8 +50,8 @@ pipeline {
         }
         stage('Approve Run'){
             input {
-                message: 'Ready to run Plan?'
-                ok: 'true'
+                message "Ready to run Plan?"
+                ok "true"
                 parameters {
                     booleanParam(name: 'apply')
                 }
