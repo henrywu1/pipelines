@@ -10,7 +10,8 @@ pipeline {
     stages {
         stage('Cleanup'){
             steps {
-                deleteDir()
+                sh 'rm timestamp*'
+                sh 'rm *.outfile'
             }
         }
         stage('Retrieve Code'){
