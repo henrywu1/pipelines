@@ -18,13 +18,13 @@ pipeline {
         }
         stage('Deploy Update User Script'){
             steps {
-                load "$JENKINS_HOME/.envars/prod"
                 dir('ansible'){
-                    ansiblePlaybook (
-                        playbook: 'update_users.yml',
-                        inventory: 'hosts/${Hosts}',
-                        credentialsId: 'Richard'
-                    )
+                    sshagent (credentials: ['Program']) {
+                        ansiblePlaybook (
+                            playbook: 'update_users.yml',
+                            inventory: 'hosts/${Hosts}', 
+                        )
+                    }
                 }
             }
         }
