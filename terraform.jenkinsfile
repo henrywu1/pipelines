@@ -17,17 +17,17 @@ pipeline {
             steps {
                 script {
                     if(Sandbox=="true"){
-                        repo='git@github.com:rlomax21/Infra-Dev.git'
+                        env.repo='git@github.com:rlomax21/Infra-Dev.git'
                     }
                     else{
-                        repo='git@github.com:TodayTix/config.git'
+                        env.repo='git@github.com:TodayTix/config.git'
                     }
                 }
-                sh 'echo ${repo}'
+                sh 'echo ${env.repo}'
                 git (
                     branch: 'master',
                     credentialsId: 'Richard',
-                    url: '${repo}'
+                    url: '${env.repo}'
                 )
             }
         }
@@ -35,10 +35,10 @@ pipeline {
             steps {
                 script {
                     if(Sandbox=="true"){
-                        cld='dev'
+                        env.cld='dev'
                    }
                     else{
-                        cld='prod'
+                        env.cld='prod'
                     }
                 }
                 load "$JENKINS_HOME/.envars/${cld}"
@@ -60,13 +60,13 @@ pipeline {
             steps {
                 script {
                     if(Sandbox=="true"){
-                        cld='dev'
+                        env.cld='dev'
                     }
                     else{
-                        cld='prod'
+                        env.cld='prod'
                     }
                 }
-                load "$JENKINS_HOME/.envars/${cld}"
+                load "$JENKINS_HOME/.envars/${env.cld}"
                 dir('terraform/${Environment}'){
                     sh 'terraform apply -auto-approve $(cat timestamp.txt).outfile'
                 }
