@@ -7,18 +7,6 @@ pipeline {
     options {
         timeout(time:10)
     }
-    environment {
-        script {
-            if(Sandbox=="true"){
-                cld='dev'
-                repo='git@github.com:rlomax21/Infra-Dev.git'
-            }
-            else{
-                cld='prod'
-                repo='git@github.com:TodayTix/config.git'
-            }
-        }
-    }
     stages {
         stage('Cleanup'){
             steps {
@@ -27,6 +15,14 @@ pipeline {
         }
         stage('Retrieve Code'){
             steps {
+                script {
+                    if(Sandbox=="true"){
+                        repo='git@github.com:rlomax21/Infra-Dev.git'
+                    }
+                    else{
+                        repo='git@github.com:TodayTix/config.git'
+                    }
+                }
                 git (
                     branch: 'master',
                     credentialsId: 'Richard',
@@ -36,6 +32,14 @@ pipeline {
         }
         stage('Run plan'){
             steps {
+                script {
+                    if(Sandbox=="true"){
+                        cld='dev'
+                   }
+                    else{
+                        cld='prod'
+                    }
+                }
                 load "$JENKINS_HOME/.envars/${cld}"
                 dir('terraform/${Environment}'){
                     sh 'terraform init'
@@ -47,9 +51,24 @@ pipeline {
         stage('Approve Run'){
             input "Plan Approved"
             steps {
+                input {
+                    message: 'Ready to run Plan?'
+                    ok: 'true'
+                    parameters {
+                        booleanParam(name: 'apply')
+                    }
+                }
+                script {
+                    if(Sandbox=="true"){
+                        cld='dev'
+                    }
+                    else{
+                        cld='prod'
+                    }
+                }
                 load "$JENKINS_HOME/.envars/${cld}"
                 dir('terraform/${Environment}'){
-                    sh 'terraform apply -auto-approve $(cat timestamp.txt).outfile)'
+                    sh 'terraform apply -auto-approve $(cat timestamp.txt).outfile'
                 }
             }
         }
