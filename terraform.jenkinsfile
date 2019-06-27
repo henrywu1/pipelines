@@ -51,13 +51,13 @@ pipeline {
             }
         }
         stage('Approve Plan'){
-            timeout(time:180) {
-                input {
-                    message "Ready to run Plan?"
-                    ok "Approve"
-                }
-            }
             steps {
+                timeout(time:180) {
+                    input {
+                        message "Ready to run Plan?"
+                        ok "Approve"
+                    }
+                }
                 script {
                     if(Sandbox=="true"){
                         env.cld='dev'
