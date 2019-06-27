@@ -2,6 +2,7 @@ pipeline {
     agent any
     parameters {
         choice(name: 'Workspace', choices: 'shared\ndev\nqa\nstaging\ndemo')
+        string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
         booleanParam(name: 'Sandbox', defaultValue: true, description: 'Run in sandbox cloud account')
     }
     options {
@@ -18,13 +19,15 @@ pipeline {
                 script {
                     if(Sandbox=="true"){
                         env.repo='git@github.com:rlomax21/Infra-Dev.git'
+                        env.userbranch='lomax/config'
                     }
                     else{
                         env.repo='git@github.com:TodayTix/config.git'
+                        env.userbranch="${Branch}"
                     }
                 }
                 git (
-                    branch: 'master',
+                    branch: "${userbranch}",
                     credentialsId: 'Richard',
                     url: "${repo}"
                 )
