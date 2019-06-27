@@ -53,10 +53,7 @@ pipeline {
         stage('Approve Plan'){
             steps {
                 timeout(time:180) {
-                    input {
-                        message: "Ready to run Plan?"
-                        ok: "Approve"
-                    }
+                    input(message: "Ready to run Plan?", ok: "Approve")
                 }
                 script {
                     if(Sandbox=="true"){
