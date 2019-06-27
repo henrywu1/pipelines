@@ -50,13 +50,13 @@ pipeline {
                 }
             }
         }
-        timeout(180){
-            input {
-                message "Ready to run Plan?"
-                ok "Approve"
+        stage('Approve Plan'){
+            timeout(time:180) {
+                input {
+                    message "Ready to run Plan?"
+                    ok "Approve"
+                }
             }
-        }
-        stage('Apply Plan'){
             steps {
                 script {
                     if(Sandbox=="true"){
