@@ -5,9 +5,6 @@ pipeline {
         string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
         booleanParam(name: 'Sandbox', defaultValue: true, description: 'Run in sandbox cloud account')
     }
-    options {
-        timeout(time:10)
-    }
     stages {
         stage('Start'){
             steps {
