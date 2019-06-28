@@ -3,6 +3,9 @@ pipeline {
     parameters {
         choice(name: 'Hosts', choices: 'dev\nqa\nstaging\nprod\ndata\ndata-dev\nsys')
     }
+    environment {
+        creds = credentials('Richard')
+    }
     options {
         timeout(time:10)
     }
@@ -20,9 +23,6 @@ pipeline {
             steps {
                 load "$JENKINS_HOME/.envars/prod"
                 dir('ansible'){
-                    script {
-                        env.creds = credentials('Richard')
-                    }
                     sh 'printenv'
                     sh "ansible-playbook update_users.yml --key-file ${creds} -u richard -i ${Hosts}"
                 }
