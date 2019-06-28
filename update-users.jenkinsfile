@@ -23,8 +23,7 @@ pipeline {
                     script {
                         env.creds = credentials('Richard')
                     }
-                    sh 'printenv'
-                    sh "ansible-playbook update_users.yml --key-file ${creds} -u ${creds_USR} -i ${Hosts}"
+                    sh "ansible-playbook update_users.yml --key-file ${creds} -u richard -i ${Hosts}"
                 }
             }
         }
