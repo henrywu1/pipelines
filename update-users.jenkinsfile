@@ -20,7 +20,9 @@ pipeline {
             steps {
                 load "$JENKINS_HOME/.envars/prod"
                 dir('ansible'){
-                    env.creds = credentials('Richard')
+                    script {
+                        env.creds = credentials('Richard')
+                    }
                     sh "ansible-playbook update_users.yml --key-file ${creds} -u ${creds_USR} -i ${Hosts}"
                 }
             }
