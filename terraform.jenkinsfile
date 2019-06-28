@@ -6,7 +6,7 @@ pipeline {
         booleanParam(name: 'Sandbox', defaultValue: true, description: 'Run in sandbox cloud account')
     }
     stages {
-        stage('Start'){
+        stage('Cleanup'){
             steps {
                 deleteDir()
             }
@@ -51,18 +51,18 @@ pipeline {
             steps {
                 timeout(time:180) {
                     input(message: "Ready to run Plan?", ok: "Approve")
-                }
-                script {
-                    if(Sandbox=="true"){
-                        env.cld='dev'
+                    script {
+                        if(Sandbox=="true"){
+                            env.cld='dev'
+                        }
+                        else{
+                            env.cld='prod'
+                        }
                     }
-                    else{
-                        env.cld='prod'
+                    load "$JENKINS_HOME/.envars/${cld}"
+                    dir("terraform/${Workspace}"){
+                        sh 'terraform apply -auto-approve'
                     }
-                }
-                load "$JENKINS_HOME/.envars/${cld}"
-                dir("terraform/${Workspace}"){
-                    sh 'terraform apply -auto-approve'
                 }
             }
         }
