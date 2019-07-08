@@ -27,10 +27,10 @@ pipeline {
                     sh 'ls -al'
                     script {
                         if (Tags==''){
-                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts}"
+                            sh "ansible-playbook deploy_grails.yml hosts/${Hosts}"
                         }
                         else {
-                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} --tags '${Tags}'"
+                            sh "ansible-playbook deploy_grails.yml hosts/${Hosts} --tags '${Tags}'"
                         }
                     }
                 }
