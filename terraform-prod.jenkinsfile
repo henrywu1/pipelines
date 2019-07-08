@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
+    }
+    stages {
+        stage('Cleanup'){
+            steps {
+                deleteDir()
+            }
+        }
+        stage('Retrieve Code'){
+            steps {
+                git (
+                    branch: "${Branch}",
+                    credentialsId: 'Richard',
+                    url: 'git@github.com:TodayTix/config.git'
+                )
+            }
+        }
+        stage('Run plan'){
+            steps {
+                load "$JENKINS_HOME/.envars/prod"
+                dir("terraform/prod"){
+                    sh 'terraform init'
+                    sh 'terraform plan'
+                }
+            }
+        }
+        stage('Approve Plan'){
+            steps {
+                timeout(time:180) {
+                    input(message: "Ready to run Plan?", ok: "Approve")
+                    load "$JENKINS_HOME/.envars/prod"
+                    dir("terraform/prod"){
+                        sh 'terraform apply -auto-approve'
+                    }
+                }
+            }
+        }
+    }
+}
