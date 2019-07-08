@@ -24,13 +24,13 @@ pipeline {
             steps {
                 load "$JENKINS_HOME/.envars/prod"
                 dir('ansible'){
-                    sh 'printenv'
+                    sh 'ls -al'
                     script {
                         if (Tags==''){
-                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i ${Hosts}"
+                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts}"
                         }
                         else {
-                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i ${Hosts} --tags '${Tags}'"
+                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} --tags '${Tags}'"
                         }
                     }
                 }
