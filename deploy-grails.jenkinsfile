@@ -20,7 +20,7 @@ pipeline {
                 )
             }
         }
-        stage('Deploy Update User Script'){
+        stage('Deploy Grails Application Script'){
             steps {
                 load "$JENKINS_HOME/.envars/prod"
                 dir('ansible'){
