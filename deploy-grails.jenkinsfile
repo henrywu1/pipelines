@@ -24,15 +24,15 @@ pipeline {
                     script {
                         if (Tags==''){
                             ansiblePlaybook (
-                                playbook: 'update_users.yml',
-                                inventory: "${Hosts}", 
+                                playbook: 'deploy_grails.yml',
+                                inventory: "hosts/${Hosts}", 
                                 credentialsId: 'Richard'
                             )
                         }
                         else {
                             ansiblePlaybook (
-                                playbook: 'update_users.yml',
-                                inventory: "${Hosts}", 
+                                playbook: 'deploy_grails.yml',
+                                inventory: "hosts/${Hosts}", 
                                 credentialsId: 'Richard',
                                 tags: "${Tags}"
                             )
