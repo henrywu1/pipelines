@@ -26,20 +26,9 @@ pipeline {
                 dir('ansible'){
                     script {
                         if (Tags==''){
-                            ansiblePlaybook (
-                                playbook: 'deploy_grails.yml',
-                                inventory: "hosts/${Hosts}", 
-                                credentialsId: 'Richard'
-                            )
                             sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts}"
                         }
                         else {
-                            ansiblePlaybook (
-                                playbook: 'deploy_grails.yml',
-                                inventory: "hosts/${Hosts}", 
-                                credentialsId: 'Richard',
-                                tags: "${Tags}"
-                            )
                             sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} -t ${Tags}"
                         }
                     }
