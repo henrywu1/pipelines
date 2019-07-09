@@ -4,6 +4,9 @@ pipeline {
         choice(name: 'Hosts', choices: 'dev\nqa\nstaging\nprod\ndata\ndata-dev\nsys')
         string(name: 'Tags', description: 'Tags to add Separated by commas')
     }
+    environment {
+        creds = credentials('Richard')
+    }
     options {
         timeout(time:10)
     }
@@ -28,6 +31,7 @@ pipeline {
                                 inventory: "hosts/${Hosts}", 
                                 credentialsId: 'Richard'
                             )
+                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts}"
                         }
                         else {
                             ansiblePlaybook (
@@ -36,6 +40,7 @@ pipeline {
                                 credentialsId: 'Richard',
                                 tags: "${Tags}"
                             )
+                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} -t ${Tags}"
                         }
                     }
                 }
