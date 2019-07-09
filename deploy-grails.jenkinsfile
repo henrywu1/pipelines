@@ -30,7 +30,7 @@ pipeline {
                             sh "ansible-playbook deploy_grails.yml hosts/${Hosts}"
                         }
                         else {
-                            sh "ansible-playbook deploy_grails.yml hosts/${Hosts} --tags '${Tags}'"
+                            sh "ansible-playbook deploy_grails.yml hosts/${Hosts} -t ${Tags}"
                         }
                     }
                 }
