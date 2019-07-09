@@ -4,9 +4,6 @@ pipeline {
         choice(name: 'Hosts', choices: 'dev\nqa\nstaging\nprod\ndata\ndata-dev\nsys')
         string(name: 'Tags', description: 'Tags to add Separated by commas')
     }
-    environment {
-        creds = credentials('Richard')
-    }
     options {
         timeout(time:10)
     }
@@ -24,13 +21,21 @@ pipeline {
             steps {
                 load "$JENKINS_HOME/.envars/prod"
                 dir('ansible'){
-                    sh 'ls -al'
                     script {
                         if (Tags==''){
-                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts}"
+                            ansiblePlaybook (
+                                playbook: 'update_users.yml',
+                                inventory: "${Hosts}", 
+                                credentialsId: 'Richard'
+                            )
                         }
                         else {
-                            sh "ansible-playbook deploy_grails.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} -t ${Tags}"
+                            ansiblePlaybook (
+                                playbook: 'update_users.yml',
+                                inventory: "${Hosts}", 
+                                credentialsId: 'Richard',
+                                tags: "${Tags}"
+                            )
                         }
                     }
                 }
