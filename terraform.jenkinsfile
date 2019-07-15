@@ -46,8 +46,7 @@ pipeline {
                 load "$JENKINS_HOME/.envars/${cld}"
                 dir("terraform/${Workspace}"){
                     sh 'terraform init'
-                    sh 'echo $(date "+%m_%d_%y_%T") >> timestamp.txt'
-                    sh 'terraform plan -out="$(cat timestamp.txt).outfile"'
+                    sh 'terraform plan'
                 }
             }
         }
@@ -65,7 +64,7 @@ pipeline {
                     }
                     load "$JENKINS_HOME/.envars/${cld}"
                     dir("terraform/${Workspace}"){
-                        sh 'terraform apply -auto-approve $(cat timestamp.txt).outfile'
+                        sh 'terraform apply -auto-approve'
                     }
                 }
             }
