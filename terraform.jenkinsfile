@@ -6,7 +6,7 @@ pipeline {
         booleanParam(name: 'Sandbox', defaultValue: true, description: 'Run in sandbox cloud account')
     }
     environment {
-        TF_VAR_ssh_key=credentials('Richard')
+        creds=credentials('Richard')
     }
     stages {
         stage('Cleanup'){
