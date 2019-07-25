@@ -6,7 +6,7 @@ pipeline {
         string(name: 'Tags', description: 'Tags to add Separated by commas')
     }
     environment {
-        creds = credentials('Richard')
+        creds = credentials('ROOT')
     }
     options {
         timeout(time:10)
@@ -16,7 +16,7 @@ pipeline {
             steps {
                 git (
                     branch: 'master',
-                    credentialsId: 'Richard',
+                    credentialsId: 'Main',
                     url: 'git@github.com:TodayTix/config.git'
                 )
             }

@@ -6,7 +6,7 @@ pipeline {
         booleanParam(name: 'Sandbox', defaultValue: true, description: 'Run in sandbox cloud account')
     }
     environment {
-        TF_VAR_ssh_key=credentials('Richard')
+        TF_VAR_ssh_key=credentials('ROOT')
     }
     stages {
         stage('Cleanup'){
@@ -28,7 +28,7 @@ pipeline {
                 }
                 git (
                     branch: "${userbranch}",
-                    credentialsId: 'Richard',
+                    credentialsId: 'Main',
                     url: "${repo}"
                 )
             }
