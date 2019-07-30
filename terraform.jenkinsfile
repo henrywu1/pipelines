@@ -9,9 +9,11 @@ pipeline {
         TF_VAR_ssh_key=credentials('ROOT')
     }
     stages {
-        stage('Cleanup'){
+        stage('Initialize'){
             steps {
                 deleteDir()
+                buildName "${Branch}-${Workspace}-Sandbox:${Sandbox}-$(echo date)"
+                buildDescription "${Workspace} Build from ${Branch}, and Sandbox is ${Sandbox}"
             }
         }
         stage('Retrieve Code'){

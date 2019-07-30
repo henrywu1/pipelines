@@ -4,9 +4,11 @@ pipeline {
         string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
     }
     stages {
-        stage('Cleanup'){
+        stage('Initialize'){
             steps {
                 deleteDir()
+                buildName "Build-${Branch}-Prod-$(echo date)"
+                buildDescription "Production Build from ${Branch}"
             }
         }
         stage('Retrieve Code'){

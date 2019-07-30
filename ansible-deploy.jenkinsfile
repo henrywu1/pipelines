@@ -12,6 +12,13 @@ pipeline {
         timeout(time:10)
     }
     stages {
+        stage('Initialize'){
+            steps {
+                deleteDir()
+                buildName "${Playbook}-${Hosts}-$(echo date)"
+                buildDescription "Run ${Playbook} on ${Hosts} with Tags:${Tags}"
+            }
+        }
         stage('Retrieve Code'){
             steps {
                 git (
@@ -34,11 +41,6 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
-        stage('Cleanup'){
-            steps {
-                deleteDir()
             }
         }
     }
