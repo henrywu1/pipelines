@@ -7,7 +7,7 @@ pipeline {
         stage('Initialize'){
             steps {
                 deleteDir()
-                buildName "Build-${Branch}-Prod-$(echo date)"
+                buildName "Build-${Branch}-Prod-${BUILD_ID}"
                 buildDescription "Production Build from ${Branch}"
             }
         }

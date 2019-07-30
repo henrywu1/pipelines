@@ -15,7 +15,7 @@ pipeline {
         stage('Initialize'){
             steps {
                 deleteDir()
-                buildName "${Playbook}-${Hosts}-$(echo date)"
+                buildName "${Playbook}-${Hosts}-${BUILD_ID}"
                 buildDescription "Run ${Playbook} on ${Hosts} with Tags:${Tags}"
             }
         }
