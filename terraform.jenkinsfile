@@ -20,7 +20,7 @@ pipeline {
                 git (
                     branch: "${Branch}",
                     credentialsId: 'Main',
-                    url: "${repo}"
+                    url: "${INFRA_REPO}"
                 )
             }
         }
