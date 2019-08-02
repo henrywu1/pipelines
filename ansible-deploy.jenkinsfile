@@ -30,7 +30,6 @@ pipeline {
         }
         stage('Run Playbook'){
             steps {
-                load "$JENKINS_HOME/.envars/prod"
                 dir('ansible'){
                     script {
                         if (Tags==''){

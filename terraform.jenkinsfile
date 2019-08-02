@@ -3,7 +3,6 @@ pipeline {
     parameters {
         choice(name: 'Workspace', choices: 'shared\ndev\nqa\nstaging\ndemo')
         string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
-        booleanParam(name: 'Sandbox', defaultValue: true, description: 'Run in sandbox cloud account')
     }
     environment {
         TF_VAR_ssh_key=credentials('ROOT')
@@ -12,24 +11,14 @@ pipeline {
         stage('Initialize'){
             steps {
                 deleteDir()
-                buildName "${Branch}-${Workspace}-Sandbox:${Sandbox}-${BUILD_ID}"
-                buildDescription "${Workspace} Build from ${Branch}, and Sandbox is ${Sandbox}"
+                buildName "Build-${Branch}-${Workspace}-${BUILD_ID}"
+                buildDescription "${Workspace} Build from ${Branch}"
             }
         }
         stage('Retrieve Code'){
             steps {
-                script {
-                    if(Sandbox=="true"){
-                        env.repo='git@github.com:rlomax21/Infra-Dev.git'
-                        env.userbranch='lomax/config'
-                    }
-                    else{
-                        env.repo='git@github.com:TodayTix/config.git'
-                        env.userbranch="${Branch}"
-                    }
-                }
                 git (
-                    branch: "${userbranch}",
+                    branch: "${Branch}",
                     credentialsId: 'Main',
                     url: "${repo}"
                 )
@@ -37,15 +26,6 @@ pipeline {
         }
         stage('Run plan'){
             steps {
-                script {
-                    if(Sandbox=="true"){
-                        env.cld='dev'
-                   }
-                    else{
-                        env.cld='prod'
-                    }
-                }
-                load "$JENKINS_HOME/.envars/${cld}"
                 dir("terraform/${Workspace}"){
                     sh 'terraform init'
                     sh 'terraform plan'
@@ -56,15 +36,6 @@ pipeline {
             steps {
                 timeout(time:180) {
                     input(message: "Ready to run Plan?", ok: "Approve")
-                    script {
-                        if(Sandbox=="true"){
-                            env.cld='dev'
-                        }
-                        else{
-                            env.cld='prod'
-                        }
-                    }
-                    load "$JENKINS_HOME/.envars/${cld}"
                     dir("terraform/${Workspace}"){
                         sh 'terraform apply -auto-approve'
                     }
