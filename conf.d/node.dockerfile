@@ -1,6 +1,6 @@
 FROM debian:latest
 RUN bin/bash -c 'apt-get update && \
-    apt-get install -y python-pip nano && \
+    apt-get install -y python-pip nano wget ssh && \
     pip install ansible==2.8.3 && \
     pip install boto==2.49.0 && \
     pip install awscli==1.16.210 && \
