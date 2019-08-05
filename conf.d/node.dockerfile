@@ -1,10 +1,10 @@
 FROM debian:latest
+ADD 'https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip' .
 RUN bin/bash -c 'apt-get update && \
-    apt-get install -y python-pip nano wget ssh zip tar && \
+    apt-get install -y python-pip nano ssh zip tar && \
     pip install ansible==2.8.3 && \
     pip install boto==2.49.0 && \
     pip install awscli==1.16.210 && \
-    wget https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip && \
     unzip terraform* && \
     mv terraform /usr/local/bin/ && \
     rm terraform* && \
