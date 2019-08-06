@@ -14,5 +14,6 @@ ADD 'https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd6
 RUN bin/bash -c 'unzip terraform*'
 RUN bin/bash -c 'mv terraform /usr/local/bin/'
 RUN bin/bash -c 'rm terraform*'
-RUN bin/bash -c 'useradd -m -s /bin/bash jenkins'
+RUN bin/bash -c 'groupadd --gid 1024 wheel'
+RUN bin/bash -c 'useradd -m -s /bin/bash --gid 1024 jenkins'
 USER jenkins
