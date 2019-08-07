@@ -4,6 +4,7 @@ pipeline {
         choice(name: 'Hosts', choices: 'dev\nqa\nstaging\nprod\ndata\ndata-dev\nsys')
         choice(name: 'Playbook', choices: 'update_users\ndeploy_grails\ndeploy_monitoring')
         string(name: 'Tags', description: 'Tags to add Separated by commas')
+        string(name: 'Limits', description: 'Limit options pattern')
     }
     environment {
         creds = credentials('ROOT')
@@ -32,11 +33,17 @@ pipeline {
             steps {
                 dir('ansible'){
                     script {
-                        if (Tags==''){
+                        if (Tags=='' && Limits==''){
                             sh "ansible-playbook ${Playbook}.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts}"
                         }
-                        else {
+                        else if (Limits==''){
                             sh "ansible-playbook ${Playbook}.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} -t ${Tags}"
+                        }
+                        else if (Tags==''){
+                            sh "ansible-playbook ${Playbook}.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} --limit ${Limits}"
+                        }
+                        else {
+                            sh "ansible-playbook ${Playbook}.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} -t ${Tags} --limit ${Limits}" 
                         }
                     }
                 }
