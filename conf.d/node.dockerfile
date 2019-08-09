@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 RUN bin/bash -c 'apt-get update'
-RUN bin/bash -c 'apt-get install -y python-pip nano ssh zip tar software-properties-common apt-transport-https'
+RUN bin/bash -c 'apt-get install -y python-pip nano ssh zip tar git software-properties-common apt-transport-https'
 RUN bin/bash -c 'add-apt-repository ppa:openjdk-r/ppa -y'
 RUN bin/bash -c 'apt-get update'
 RUN bin/bash -c 'apt-get install -y openjdk-8-jdk -y'
