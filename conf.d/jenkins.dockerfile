@@ -1,4 +1,4 @@
-FROM jenkins/jenkins
+FROM jenkins/jenkins:latest
 USER root
 RUN bin/bash -c 'apt-get update'
 RUN bin/bash -c 'apt-get install -y nano'

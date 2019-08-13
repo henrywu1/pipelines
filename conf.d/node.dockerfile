@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 RUN bin/bash -c 'apt-get update'
-RUN bin/bash -c 'apt-get install -y python-pip nano ssh zip tar git software-properties-common apt-transport-https'
+RUN bin/bash -c 'apt-get install -y python-pip nano ssh zip tar git mysql-client software-properties-common apt-transport-https'
 RUN bin/bash -c 'add-apt-repository ppa:openjdk-r/ppa -y'
 RUN bin/bash -c 'apt-get update'
 RUN bin/bash -c 'apt-get install -y openjdk-8-jdk -y'
@@ -16,5 +16,5 @@ RUN bin/bash -c 'unzip terraform*'
 RUN bin/bash -c 'mv terraform /usr/local/bin/'
 RUN bin/bash -c 'rm terraform*'
 RUN bin/bash -c 'useradd -m -s /bin/bash jenkins'
-RUN bin/bash -c 'systemctl enable ssh'
+ENTRYPOINT ["/bin/bash","-c","service ssh start"]
 USER jenkins
