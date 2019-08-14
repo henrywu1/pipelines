@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 RUN bin/bash -c 'apt-get update'
-RUN bin/bash -c 'apt-get install -y python-pip nano ssh zip tar git mysql-client software-properties-common apt-transport-https'
+RUN bin/bash -c 'apt-get install -y python-pip nano ssh zip tar git mysql-client software-properties-common apt-transport-https sudo'
 RUN bin/bash -c 'add-apt-repository ppa:openjdk-r/ppa -y'
 RUN bin/bash -c 'apt-get update'
 RUN bin/bash -c 'apt-get install -y openjdk-8-jdk -y'
@@ -15,6 +15,7 @@ ADD 'https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd6
 RUN bin/bash -c 'unzip terraform*'
 RUN bin/bash -c 'mv terraform /usr/local/bin/'
 RUN bin/bash -c 'rm terraform*'
-RUN bin/bash -c 'useradd -m -s /bin/bash jenkins'
-ENTRYPOINT ["/bin/bash","-c","service ssh start"]
+RUN bin/bash -c 'useradd -m -s /bin/bash -G sudo jenkins'
+RUN bin/bash -c 'echo "jenkins ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/jenkins'
 USER jenkins
+ENTRYPOINT ["/bin/bash","-c","sudo service ssh start && bash"]
