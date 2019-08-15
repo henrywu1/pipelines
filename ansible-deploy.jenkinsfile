@@ -7,7 +7,7 @@ pipeline {
         string(name: 'Limits', description: 'Limit options pattern')
     }
     environment {
-        creds = credentials('ROOT')
+        creds = credentials('System')
     }
     options {
         timeout(time:10)
