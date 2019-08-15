@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'Hosts', choices: 'dev\nqa\nstaging\nprod\ndata\ndata-dev\nsys')
+        choice(name: 'Playbook', choices: 'update_users\ndeploy_grails\ndeploy_monitoring')
+        string(name: 'Tags', description: 'Tags to add Separated by commas')
+        string(name: 'Limits', description: 'Limit options pattern')
+    }
+    environment {
+        creds = credentials('ROOT')
+    }
+    options {
+        timeout(time:10)
+    }
+    stages {
+        stage('Initialize'){
+            steps {
+                deleteDir()
+                buildName "${Playbook}-${Hosts}-${BUILD_ID}"
+                buildDescription "Run ${Playbook} on ${Hosts} with Tags:${Tags}"
+            }
+        }
+        stage('Retrieve Code'){
+            steps {
+                git (
+                    branch: 'master',
+                    credentialsId: 'Main',
+                    url: 'git@github.com:TodayTix/config.git'
+                )
+            }
+        }
+        stage('Run Playbook'){
+            steps {
+                dir('ansible'){
+                    script {
+                        if (Tags=='' && Limits==''){
+                            sh "ansible-playbook ${Playbook}.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts}"
+                        }
+                        else if (Limits==''){
+                            sh "ansible-playbook ${Playbook}.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} -t ${Tags}"
+                        }
+                        else if (Tags==''){
+                            sh "ansible-playbook ${Playbook}.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} --limit ${Limits}"
+                        }
+                        else {
+                            sh "ansible-playbook ${Playbook}.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts} -t ${Tags} --limit ${Limits}" 
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

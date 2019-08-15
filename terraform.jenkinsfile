@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'Workspace', choices: 'shared\ndev\nqa\nstaging\ndemo')
+        string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
+    }
+    environment {
+        TF_VAR_ssh_key=credentials('ROOT')
+    }
+    stages {
+        stage('Initialize'){
+            steps {
+                deleteDir()
+                buildName "Build-${Branch}-${Workspace}-${BUILD_ID}"
+                buildDescription "${Workspace} Build from ${Branch}"
+            }
+        }
+        stage('Retrieve Code'){
+            steps {
+                git (
+                    branch: "${Branch}",
+                    credentialsId: 'Main',
+                    url: "${INFRA_REPO}"
+                )
+            }
+        }
+        stage('Run plan'){
+            steps {
+                dir("terraform/${Workspace}"){
+                    sh 'terraform init'
+                    sh 'terraform plan'
+                }
+            }
+        }
+        stage('Approve Plan'){
+            steps {
+                timeout(time:180) {
+                    input(message: "Ready to run Plan?", ok: "Approve")
+                    dir("terraform/${Workspace}"){
+                        sh 'terraform apply -auto-approve'
+                    }
+                }
+            }
+        }
+    }
+}
