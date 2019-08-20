@@ -26,7 +26,7 @@ pipeline {
         }
         stage('Run plan'){
             steps {
-                sh 'ansible-playbook --vault-password-file ../.envars/ansible_vault_key terraform/shared/Access_Control/secrets.tfvars'
+                sh 'ansible-playbook decrypt --vault-password-file ../.envars/ansible_vault_key terraform/shared/Access_Control/secrets.tfvars'
                 dir("terraform/${Workspace}"){
                     sh 'terraform init'
                     sh 'terraform plan'
