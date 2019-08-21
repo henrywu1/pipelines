@@ -27,7 +27,7 @@ pipeline {
         stage('Run plan'){
             steps {
                 script {
-                    if(Workspace=="shared"){
+                    if(Deploy_env=="shared"){
                         sh "ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key ${WORKSPACE}/terraform/shared/Access_Control/secrets.tf"
                     }
                 }
