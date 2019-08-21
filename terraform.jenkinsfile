@@ -26,15 +26,16 @@ pipeline {
         }
         stage('Run plan'){
             steps {
-                load "/home/jenkins/.envars/aws"
                 script {
                     if(Workspace=="shared"){
-                        sh "ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key terraform/shared/Access_Control/secrets.tf"
+                        sh 'ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key terraform/shared/Access_Control/secrets.tf'
                     }
                 }
+                load '/home/jenkins/.envars/aws'
+                sh 'printenv'
                 dir("terraform/${Workspace}"){
-                    sh "terraform init"
-                    sh "terraform plan"
+                    sh 'terraform init'
+                    sh 'terraform plan'
                 }
             }
         }
@@ -42,9 +43,9 @@ pipeline {
             steps {
                 timeout(time:180) {
                     input(message: "Ready to run Plan?", ok: "Approve")
-                    load "/home/jenkins/.envars/aws"
+                    load '/home/jenkins/.envars/aws'
                     dir("terraform/${Workspace}"){
-                        sh "terraform apply -auto-approve"
+                        sh 'terraform apply -auto-approve'
                     }
                 }
             }
