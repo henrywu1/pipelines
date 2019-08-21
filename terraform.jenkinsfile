@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        choice(name: 'Workspace', choices: 'shared\ndev\nqa\nstaging\ndemo')
+        choice(name: 'Deploy_env', description: "Environment to deploy to", choices: 'shared\ndev\nqa\nstaging\ndemo')
         string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
     }
     environment {
@@ -11,8 +11,8 @@ pipeline {
         stage('Initialize'){
             steps {
                 deleteDir()
-                buildName "Build-${Branch}-${Workspace}-${BUILD_ID}"
-                buildDescription "${Workspace} Build from ${Branch}"
+                buildName "Build-${Branch}-${Deploy_env}-${BUILD_ID}"
+                buildDescription "${Deploy_env} Build from ${Branch}"
             }
         }
         stage('Retrieve Code'){
@@ -32,7 +32,7 @@ pipeline {
                     }
                 }
                 load '/home/jenkins/.envars/aws'
-                dir("terraform/${Workspace}"){
+                dir("terraform/${Deploy_env}"){
                     sh 'ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key secrets.tf'
                     sh 'terraform init'
                     sh 'terraform plan'
@@ -44,7 +44,7 @@ pipeline {
                 timeout(time:180) {
                     input(message: "Ready to run Plan?", ok: "Approve")
                     load '/home/jenkins/.envars/aws'
-                    dir("terraform/${Workspace}"){
+                    dir("terraform/${Deploy_env}"){
                         sh 'terraform apply -auto-approve'
                     }
                 }
