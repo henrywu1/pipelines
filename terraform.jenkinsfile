@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     if(Workspace=="shared"){
-                        sh "ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key ${JENKINS_HOME}/terraform/shared/Access_Control/secrets.tf"
+                        sh "ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key ${WORKSPACE}/terraform/shared/Access_Control/secrets.tf"
                     }
                 }
                 load '/home/jenkins/.envars/aws'
