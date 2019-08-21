@@ -33,6 +33,7 @@ pipeline {
                 }
                 load '/home/jenkins/.envars/aws'
                 dir("terraform/${Workspace}"){
+                    sh 'ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key secrets.tf'
                     sh 'terraform init'
                     sh 'terraform plan'
                 }
