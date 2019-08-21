@@ -32,7 +32,6 @@ pipeline {
                     }
                 }
                 load '/home/jenkins/.envars/aws'
-                sh 'printenv'
                 dir("terraform/${Workspace}"){
                     sh 'terraform init'
                     sh 'terraform plan'
