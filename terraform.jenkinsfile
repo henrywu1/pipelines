@@ -31,7 +31,6 @@ pipeline {
                         sh "ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key ${WORKSPACE}/terraform/shared/Access_Control/secrets.tf"
                     }
                 }
-                load '/home/jenkins/.envars/aws'
                 dir("terraform/${Deploy_env}"){
                     sh 'ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key secrets.tf'
                     sh 'terraform init'
@@ -43,7 +42,6 @@ pipeline {
             steps {
                 timeout(time:180) {
                     input(message: "Ready to run Plan?", ok: "Approve")
-                    load '/home/jenkins/.envars/aws'
                     dir("terraform/${Deploy_env}"){
                         sh 'terraform apply -auto-approve'
                     }

@@ -34,7 +34,6 @@ pipeline {
             steps {
                 timeout(time:180) {
                     input(message: "Ready to run Plan?", ok: "Approve")
-                    load '/home/jenkins/.envars/aws'
                     dir("terraform/prod"){
                         sh 'terraform apply -auto-approve'
                     }
