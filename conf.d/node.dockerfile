@@ -19,7 +19,6 @@ RUN bin/bash -c 'useradd -m -s /bin/bash -G sudo jenkins'
 RUN bin/bash -c 'echo "jenkins ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/jenkins'
 RUN bin/bash -c 'mkdir /home/jenkins/.envars'
 COPY ./ansible_vault_key /home/jenkins/.envars/
-COPY ./aws /home/jenkins/.envars/
 RUN bin/bash -c 'chown -R jenkins:jenkins /home/jenkins'
 USER jenkins
 ENTRYPOINT ["/bin/bash","-c","sudo service ssh start && bash"]

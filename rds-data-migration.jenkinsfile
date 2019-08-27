@@ -1,0 +1,161 @@
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'Destination', choices: 'demo\nstaging\nqa\ndev')
+        password(name: 'source_pw')
+        password(name: 'destination_pw')
+        booleanParam(name: 'partial', defaultValue: true)
+    }
+    environment {
+        SQL_DUMP_FILENAME="RDSBACKUP_$(date +%s).sql"
+        SQL_DUMP_BUCKET="tt-db-migration"
+        SQL_DUMP_FILE_ADDR="s3://$SQL_DUMP_BUCKET/$SQL_DUMP_FILENAME"
+        CONFIG_FILE="todaytix-config.groovy"
+        CONFIG_FILE_PROTECTED="todaytix-config-protected.groovy"
+        CONFIG_FILE_DIR="/var/lib/tomcat7/lib"
+        source_db="tt-prod-rep1.cn3qnczuo3mf.us-east-1.rds.amazonaws.com"
+        source_db_user="techuser"
+        script {
+            if(Destination=="demo"){
+                destination_server="demo1.todaytix.com"
+                destination_db="tt-demo-db.cn3qnczuo3mf.us-east-1.rds.amazonaws.com"
+                destination_db_user="ttrdsadmin"
+            }
+            else if(Destination=="staging"){
+                destination_server="staging1.todaytix.com"
+                destination_db="tt-qa2-db.cn3qnczuo3mf.us-east-1.rds.amazonaws.com"
+                destination_db_user="techuser"
+            }
+            else if(Destination=="qa"){
+                destination_server="qa1.todaytix.com"
+                destination_db="tt-qa-db.cn3qnczuo3mf.us-east-1.rds.amazonaws.com"
+                destination_db_user="techuser"
+            }
+            else if(Destination=="dev"){
+                destination_server="dev1.todaytix.com"
+                destination_db="tt-dev-db.cn3qnczuo3mf.us-east-1.rds.amazonaws.com"
+                destination_db_user="techuser"
+            }
+            else {
+                destination_server=""
+                destination_db=""
+                destination_db_user=""
+            }
+            if(partial==true){
+                SQL_SCRIPT_TO_SCRUB_CUSTOMER_INFO="RDS_partial_migration_scrub.sql"
+            }
+            else {
+                SQL_SCRIPT_TO_SCRUB_CUSTOMER_INFO="RDS_scrub_customer_info.sql"
+            }
+        }
+    }
+    stages {
+        stage('Initialize'){
+            steps {
+                deleteDir()
+                buildName "${Build_ID}-RDS_DB_MIGRATE-From:Prod-To:${Destination}"
+            }
+        }
+        stage('Export from Prod Replica'){
+            steps {
+                script {
+                    if(partial==true){
+                        sh "mysqldump \
+                            --host=${source_db} \
+                            -u $source_db_user '-p${source_pw}' todaytix \
+                            address \
+                            badge \
+                            carousel_slide \
+                            carousel_slide_location_order \
+                            commission_structure \
+                            contact \
+                            display_content \
+                            display_content_entry \
+                            filter_type \
+                            filter_type_group \
+                            image \
+                            location \
+                            localized_text \
+                            lottery_setting \
+                            reminder_message \
+                            row \
+                            running_time \
+                            rush_setting \
+                            seat \
+                            seating_chart \
+                            section \
+                            show_group \
+                            show_image \
+                            show_metadata \
+                            show_metadata_image \
+                            show_rating \
+                            show_time \
+                            show_time_custom \
+                            shows \
+                            shows_badges \
+                            shows_filter_type \
+                            shows_section \
+                            shows_shows \
+                            venue \
+                            video \
+                            --verbose > ~/${SQL_DUMP_FILENAME}"
+                    }
+                    else {
+                        sh "mysqldump \
+                            --host=${source_db} \
+                            -u ${source_db_user} '-p${source_pw}' todaytix \
+                            --ignore-table=todaytix.config_host \
+                            --ignore-table=todaytix.customer_rush_show_access \
+                            --ignore-table=todaytix.mandrill_email_log \
+                            --ignore-table=todaytix.refresh_token \
+                            --ignore-table=todaytix.reminder_job \
+                            --ignore-table=todaytix.special_offer_assignment \
+                            --ignore-table=todaytix.tessitura_configuration \
+                            --ignore-table=todaytix.ticket_alert \
+                            --ignore-table=todaytix.view_show_log \
+                            --verbose > ~/${SQL_DUMP_FILENAME}"
+                        
+                        sh "mysqldump \
+                            --host=${source_db} \
+                            -u $source_db_user '-p${source_pw}' --no-data todaytix \
+                            customer_rush_show_access \
+                            mandrill_email_log \
+                            refresh_token \
+                            reminder_job \
+                            special_offer_assignment \
+                            ticket_alert \
+                            view_show_log \
+                            --verbose >> ~/${SQL_DUMP_FILENAME}"
+                    }
+                }
+            }
+        }
+        stage ('Sanitize data dump'){
+            steps {
+                //Line to get SQL scrub script
+                sh "cat ${SQL_SCRIPT_TO_SCRUB_CUSTOMER_INFO} >> ${SQL_DUMP_FILENAME}"
+            }
+        }
+        stage('Upload to Amazon S3'){
+            steps {
+                load '/home/jenkins/.envars/aws'
+                sh "aws s3 cp ~/${SQL_DUMP_FILENAME} ${SQL_DUMP_FILE_ADDR}"
+            }
+        }
+        stage('Import to Destination Database'){
+            steps {
+                sh "num_lines_run=0 \
+                    num_total=\$(wc -l ~/$SQL_DUMP_FILENAME | egrep -o '[0-9]+ ') \
+                    ((num_total *= 2)) \
+                    mysql \
+                    --host=${destination_db} \
+                    -u ${destination_db_user} -p'${destination_pw}' todaytix \
+                    --verbose < ~/${SQL_DUMP_FILENAME} \
+                    | while read line; do echo -e -n \
+                        '\r\$num_lines_run of \$num_total lines (approximate) were processed.'; \
+                        num_lines_run=\$((num_lines_run+1)); \
+                    done"
+            }
+        }
+    }
+}
