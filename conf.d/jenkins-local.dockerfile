@@ -1,9 +1,7 @@
-FROM ubuntu:latest
+FROM jenkins/jenkins
+USER root
 RUN bin/bash -c 'apt-get update'
-RUN bin/bash -c 'apt-get install -y python-pip nano ssh zip tar git mysql-client software-properties-common apt-transport-https sudo'
-RUN bin/bash -c 'add-apt-repository ppa:openjdk-r/ppa -y'
-RUN bin/bash -c 'apt-get update'
-RUN bin/bash -c 'apt-get install -y openjdk-8-jdk -y'
+RUN bin/bash -c 'apt-get install -y python-pip nano zip tar mysql-client'
 RUN bin/bash -c 'apt-get clean'
 RUN bin/bash -c 'sed -i "20i\ForwardAgent yes" /etc/ssh/ssh_config'
 RUN bin/bash -c 'sed -i "35i\StrictHostKeyChecking no" /etc/ssh/ssh_config'
@@ -19,11 +17,9 @@ RUN bin/bash -c 'mv terraform /usr/local/bin/'
 RUN bin/bash -c 'mv packer /usr/local/bin/'
 RUN bin/bash -c 'rm terraform*'
 RUN bin/bash -c 'rm *packer*'
-RUN bin/bash -c 'useradd -m -s /bin/bash -G sudo jenkins'
-RUN bin/bash -c 'echo "jenkins ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/jenkins'
+RUN bin/bash -c 'mkdir /home/jenkins/'
 RUN bin/bash -c 'mkdir /home/jenkins/.envars'
-COPY './ansible_vault_key' '/home/jenkins/.envars/'
 COPY './aws' '/home/jenkins/.envars/'
+COPY './ansible_vault_key' '/home/jenkins/.envars/'
 RUN bin/bash -c 'chown -R jenkins:jenkins /home/jenkins'
 USER jenkins
-ENTRYPOINT ["/bin/bash","-c","sudo service ssh start && bash"]
