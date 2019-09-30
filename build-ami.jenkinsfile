@@ -30,7 +30,7 @@ pipeline {
             steps {
                 load '/home/jenkins/.envars/aws'
                 dir('packer'){
-                    sh "packer buikld ${Server}.json"
+                    sh "packer build ${Server}.json"
                 }
             }
         }
