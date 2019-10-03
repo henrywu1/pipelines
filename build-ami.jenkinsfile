@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'Server', choices: 'basic\nlogs')
+    }
+    environment {
+        creds = credentials('ROOT')
+    }
+    options {
+        timeout(time:10)
+    }
+    stages {
+        stage('Initialize'){
+            steps {
+                deleteDir()
+                buildName "${Server}-Image-Build-${BUILD_ID}"
+                buildDescription "Building new ${Server} image with Packer"
+            }
+        }
+        stage('Retrieve Code'){
+            steps {
+                git (
+                    branch: 'lomax/logging-1',
+                    credentialsId: 'Main',
+                    url: 'git@github.com:TodayTix/config.git'
+                )
+            }
+        }
+        stage('Build Image'){
+            steps {
+                load '/home/jenkins/.envars/aws'
+                dir('ansible'){
+                    sh "packer build ${Server}.json"
+                }
+            }
+        }
+    }
+}
