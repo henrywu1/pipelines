@@ -23,6 +23,7 @@ pipeline {
         stage('Decrypt Files'){
             steps {
                 dir("terraform"){
+                    sh 'chmod 777 decrypt.sh'
                     sh './decrypt.sh'
                 }
             }
