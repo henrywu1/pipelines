@@ -27,7 +27,7 @@ pipeline {
         stage('Decrypt Files'){
             steps {
                 dir("terraform"){
-                    sh 'decrypt.sh'
+                    sh './decrypt.sh'
                 }
             }
         }
