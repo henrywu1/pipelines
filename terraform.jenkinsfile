@@ -24,16 +24,17 @@ pipeline {
                 )
             }
         }
+        stage('Decrypt Files'){
+            steps {
+                dir("terraform"){
+                    sh 'decrypt.sh'
+                }
+            }
+        }
         stage('Run plan'){
             steps {
-                script {
-                    if(Deploy_env=="shared"){
-                        sh "ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key ${WORKSPACE}/terraform/shared/Access_Control/secrets.tf"
-                    }
-                }
                 load '/home/jenkins/.envars/aws'
                 dir("terraform/${Deploy_env}"){
-                    sh 'ansible-vault decrypt --vault-password-file /home/jenkins/.envars/ansible_vault_key secrets.tf'
                     sh 'terraform init'
                     sh "terraform plan -out=${BUILD_ID}.out"
                 }
