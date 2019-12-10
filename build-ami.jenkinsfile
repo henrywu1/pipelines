@@ -20,7 +20,7 @@ pipeline {
         stage('Retrieve Code'){
             steps {
                 git (
-                    branch: 'master',
+                    branch: 'lomax/logging-2',
                     credentialsId: 'Main',
                     url: 'git@github.com:TodayTix/config.git'
                 )
