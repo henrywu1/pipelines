@@ -39,6 +39,7 @@ pipeline {
                     sh 'terraform init'
                     sh "terraform plan -out=${BUILD_ID}.out"
                 }
+                slackSend(channel: '#notifications', message: "Terraform planned for ${Deploy_env}")
             }
         }
         stage('Approve Plan'){
@@ -49,6 +50,7 @@ pipeline {
                     dir("terraform/${Deploy_env}"){
                         sh "terraform apply -auto-approve ${BUILD_ID}.out"
                     }
+                    slackSend(channel: '#notifications', message: "Terraform deployed for ${Deploy_env}")
                 }
             }
         }
