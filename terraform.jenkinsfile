@@ -39,7 +39,7 @@ pipeline {
                 dir("terraform/${Deploy_env}"){
                     sh 'terraform init'
                     sh "terraform plan -out=${BUILD_ID}.out 2>&1 | tee ${BUILD_ID}.txt"
-                    sh 'curl -F "content=`cat ${BUILD_ID}.txt`" -H "Authorization: Bearer ${Slack_Key}" https://slack.com/api/files.upload?channels=%23notifications&filetype=text&initial_comment=Jenkins%20Build%20${BUILD_ID}&title=Terraform%20Plan%20${BUILD_ID}&pretty=1'
+                    sh 'curl -H "Authorization: Bearer ${Slack_Key}" https://slack.com/api/files.upload?content=`cat ${BUILD_ID}.txt`&channels=%23notifications&filetype=text&initial_comment=Jenkins%20Build%20${BUILD_ID}&title=Terraform%20Plan%20${BUILD_ID}&pretty=1'
                 }
             }
         }
