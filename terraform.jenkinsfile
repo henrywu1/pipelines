@@ -38,16 +38,7 @@ pipeline {
                 dir("terraform/${Deploy_env}"){
                     sh 'terraform init'
                     sh "terraform plan -out=${BUILD_ID}.out"
-                    block = [
-                        {
-                            "type": "file"
-                            "mode": "snippet"
-                            "name": "${BUILD_ID}.out"
-                            "filetype": "text"
-                        }
-                    ]
-                    slackSend(blocks: block)
-                    slackUploadFile filePath: "${BUILD_ID}.out", initialComment: "New Infra Output for ${Deploy_Env} Environment"
+                    slackUploadFile "${BUILD_ID}.out"
                 }
             }
         }
