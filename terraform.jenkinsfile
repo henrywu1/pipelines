@@ -37,8 +37,8 @@ pipeline {
                 load '/home/jenkins/.envars/aws'
                 dir("terraform/${Deploy_env}"){
                     sh 'terraform init'
-                    sh "terraform plan -out=${BUILD_ID}.out"
-                    slackUploadFile "${BUILD_ID}.out"
+                    sh "terraform plan -out=${BUILD_ID}.out >> ${BUILD_ID}.txt"
+                    slackUploadFile "${BUILD_ID}.txt"
                 }
             }
         }
