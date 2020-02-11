@@ -6,6 +6,7 @@ pipeline {
     }
     environment {
         TF_VAR_ssh_key=credentials('ROOT')
+        Slack_Key=credentials('jenkins-bot')
     }
     stages {
         stage('Initialize'){
@@ -37,8 +38,8 @@ pipeline {
                 load '/home/jenkins/.envars/aws'
                 dir("terraform/${Deploy_env}"){
                     sh 'terraform init'
-                    sh "terraform plan -out=${BUILD_ID}.out >> ${BUILD_ID}.txt"
-                    slackUploadFile "${BUILD_ID}.txt"
+                    sh "terraform plan -out=${BUILD_ID}.out 2>&1 | tee ${BUILD_ID}.txt"
+                    curl -F "content=`cat ${BUILD_ID}.txt`" -H "Authorization: Bearer ${Slack_Key}" https://slack.com/api/files.upload?channels=%23notifications&filetype=text&title=Terraform%20Plan%20${BUILD_ID}&pretty=1
                 }
             }
         }
@@ -50,7 +51,7 @@ pipeline {
                     dir("terraform/${Deploy_env}"){
                         sh "terraform apply -auto-approve ${BUILD_ID}.out"
                     }
-                    slackSend color: 'good', message: 'Message from Jenkins Pipeline'
+                    slackSend color: 'good', message: 'Terraform Build ${BUILD_ID} has finished'
                 }
             }
         }
