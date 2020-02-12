@@ -3,6 +3,10 @@ pipeline {
     parameters {
         string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
     }
+    environment {
+        TF_VAR_ssh_key=credentials('ROOT')
+        Slack_Key=credentials('jenkins-bot')
+    }
     stages {
         stage('Initialize'){
             steps {
@@ -35,6 +39,7 @@ pipeline {
                     load '/home/jenkins/.envars/aws'
                     sh 'terraform init'
                     sh "terraform plan -out=${BUILD_ID}.out"
+                    sh 'curl -F "content=`cat ${BUILD_ID}.txt`" -F "channels=#notifications" -F "title=Terraform Plan ENV: Prod BUILD: ${BUILD_ID} BRANCH: ${Branch}" -F "initial_comment=Jenkins Prod Build" -H "Authorization: Bearer ${Slack_Key}" https://slack.com/api/files.upload'
                 }
             }
         }
@@ -46,6 +51,7 @@ pipeline {
                     dir("terraform/prod"){
                         sh "terraform apply -auto-approve ${BUILD_ID}.out"
                     }
+                    slackSend color: 'good', message: "Terraform Prod Build ${BUILD_ID} has finished"
                 }
             }
         }

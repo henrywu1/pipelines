@@ -39,7 +39,7 @@ pipeline {
                 dir("terraform/${Deploy_env}"){
                     sh 'terraform init'
                     sh "terraform plan -out=${BUILD_ID}.out 2>&1 | tee ${BUILD_ID}.txt"
-                    sh 'curl -F "content=`cat ${BUILD_ID}.txt`" -F "channels=#notifications" -F "title=Terraform Plan ${BUILD_ID}" -F "initial_comment=${Deploy_env} Jenkins Build for plan ${BUILD_ID}" -H "Authorization: Bearer ${Slack_Key}" https://slack.com/api/files.upload'
+                    sh 'curl -F "content=`cat ${BUILD_ID}.txt`" -F "channels=#notifications" -F "title=Terraform Plan ENV: ${Deploy_env} BUILD: ${BUILD_ID} BRANCH: ${Branch}" -F "initial_comment=Jenkins ${Deploy_env} Build" -H "Authorization: Bearer ${Slack_Key}" https://slack.com/api/files.upload'
                 }
             }
         }
@@ -51,7 +51,7 @@ pipeline {
                     dir("terraform/${Deploy_env}"){
                         sh "terraform apply -auto-approve ${BUILD_ID}.out"
                     }
-                    slackSend color: 'good', message: '${Deploy_env} Terraform Build ${BUILD_ID} has finished'
+                    slackSend color: 'good', message: "Terraform ${Deploy_env} Build ${BUILD_ID} has finished"
                 }
             }
         }
