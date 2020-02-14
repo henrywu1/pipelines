@@ -38,8 +38,8 @@ pipeline {
                 load '/home/jenkins/.envars/aws'
                 dir("terraform/${Deploy_env}"){
                     sh 'terraform init'
-                    sh "terraform plan -out=${BUILD_ID}.out 2>&1 | tee ${BUILD_ID}.txt"
-                    sh 'curl -F "content=`cat ${BUILD_ID}.txt`" -F "channels=#notifications" -F "title=Terraform Plan ENV: ${Deploy_env} BUILD: ${BUILD_ID} BRANCH: ${Branch}" -F "initial_comment=Jenkins ${Deploy_env} Build" -H "Authorization: Bearer ${Slack_Key}" https://slack.com/api/files.upload'
+                    sh "terraform plan -no-color -out=${BUILD_ID}.out 2>&1 | tee ${BUILD_ID}.txt"
+                    sh 'curl -F "content=`cat ${BUILD_ID}.txt`" -F "channels=#notifications" -F "title=TEST TEST Terraform Plan ENV: ${Deploy_env} BUILD: ${BUILD_ID} BRANCH: ${Branch}" -F "initial_comment=Jenkins ${Deploy_env} Build\n${BUILD_URL}" -H "Authorization: Bearer ${Slack_Key}" https://slack.com/api/files.upload'
                 }
             }
         }
@@ -49,7 +49,7 @@ pipeline {
                     input(message: "Ready to run Plan?", ok: "Approve")
                     load '/home/jenkins/.envars/aws'
                     dir("terraform/${Deploy_env}"){
-                        sh "terraform apply -auto-approve ${BUILD_ID}.out"
+                        sh "terraform apply -no-color -auto-approve ${BUILD_ID}.out"
                     }
                     slackSend color: 'good', message: "Terraform ${Deploy_env} Build ${BUILD_ID} has finished"
                 }
