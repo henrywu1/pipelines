@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        choice(name: 'Hosts', choices: 'dev\nqa\nstaging\ndemo\nprod\ndata\ndata-dev\nsys')
+        choice(name: 'Hosts', choices: 'dev\nqa\nstaging\ndemo\nprod\ndata\ndata-dev\nsys\nlogs')
         choice(name: 'Playbook', choices: 'update_users\ndeploy_grails\nrestart_grails\ndeploy_monitoring')
         string(name: 'Tags', description: 'Tags to add Separated by commas')
         string(name: 'Limits', description: 'Limit options pattern')
