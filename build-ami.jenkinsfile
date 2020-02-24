@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'todaytix/jenkins-node:latest'
+            registryCredentialsId 'Docker'
+        }
+    }
     parameters {
         choice(name: 'Server', choices: 'basic\nlogs')
     }

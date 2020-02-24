@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'todaytix/jenkins-node:latest'
+            registryCredentialsId 'Docker'
+        }
+    }
     parameters {
         string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
     }
