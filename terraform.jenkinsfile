@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'todaytix/jenkins-node:latest'
+            registryCredentialsId 'Docker'
+        }
+    }
     parameters {
         choice(name: 'Deploy_env', description: "Environment to deploy to", choices: 'shared\ndev\nqa\nstaging\ndemo')
         string(name: 'Branch', defaultValue: 'master', description: 'Branch issuing pull request')
@@ -35,7 +40,6 @@ pipeline {
         }
         stage('Run plan'){
             steps {
-                load '/home/jenkins/.envars/aws'
                 dir("terraform/${Deploy_env}"){
                     sh 'terraform init'
                     sh "terraform plan -no-color -out=${BUILD_ID}.out 2>&1 | tee ${BUILD_ID}.txt"
@@ -47,7 +51,6 @@ pipeline {
             steps {
                 timeout(time:180) {
                     input(message: "Ready to run Plan?", ok: "Approve")
-                    load '/home/jenkins/.envars/aws'
                     dir("terraform/${Deploy_env}"){
                         sh "terraform apply -no-color -auto-approve ${BUILD_ID}.out"
                     }
