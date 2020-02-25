@@ -41,7 +41,6 @@ pipeline {
             steps {
                 load '/home/jenkins/.envars/aws'
                 dir("terraform/prod"){
-                    load '/home/jenkins/.envars/aws'
                     sh 'terraform init'
                     sh "terraform plan -no-color -out=${BUILD_ID}.out 2>&1 | tee ${BUILD_ID}.txt"
                     sh 'curl -F "content=`cat ${BUILD_ID}.txt`" -F "channels=#notifications" -F "title=Terraform Plan ENV: Prod BUILD: ${BUILD_ID} BRANCH: ${Branch}" -F "initial_comment=Jenkins Prod Build\n${BUILD_URL}" -H "Authorization: Bearer ${Slack_Key}" https://slack.com/api/files.upload'
@@ -52,7 +51,6 @@ pipeline {
             steps {
                 timeout(time:180) {
                     input(message: "Ready to run Plan?", ok: "Approve")
-                    load '/home/jenkins/.envars/aws'
                     dir("terraform/prod"){
                         sh "terraform apply -no-color -auto-approve ${BUILD_ID}.out"
                     }
