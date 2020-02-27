@@ -36,7 +36,6 @@ pipeline {
         }
         stage('Run Playbook'){
             steps {
-                load '/home/jenkins/.envars/aws'
                 dir('ansible'){
                     script {
                         if (Tags=='' && Limits==''){

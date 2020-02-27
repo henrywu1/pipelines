@@ -33,7 +33,6 @@ pipeline {
         }
         stage('Build Image'){
             steps {
-                load '/home/jenkins/.envars/aws'
                 dir('ansible'){
                     sh "packer build ${Server}.json"
                 }
