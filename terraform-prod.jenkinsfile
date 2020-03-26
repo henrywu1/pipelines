@@ -53,7 +53,7 @@ pipeline {
                     dir("terraform/prod"){
                         sh "terraform apply -no-color -auto-approve ${BUILD_ID}.out"
                     }
-                    slackSend color: 'good', message: "Terraform Prod Build ${BUILD_ID} has finished"
+                    slackSend color: 'good', message: "Terraform Prod Build ${BUILD_ID} BRANCH: ${Branch} has finished"
                 }
             }
         }

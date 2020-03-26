@@ -49,7 +49,7 @@ pipeline {
                             Extras=" -e ${Extra_Vars}"
                         }
                         if (Limits!=''){
-                            Limitvar=" --limits ${Limits}"
+                            Limitvar=" --limit ${Limits}"
                         }
                         sh "ansible-playbook ${Playbook}.yml --key-file ${creds} -u ${creds_USR} -i hosts/${Hosts}${Tagvar}${Extras}${Limitvar}"
                     }
